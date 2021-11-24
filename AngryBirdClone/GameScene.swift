@@ -23,6 +23,8 @@ class GameScene: SKScene {
     var box9 = SKSpriteNode()
     var box10 = SKSpriteNode()
     
+    var gameStarted = false
+    
     override func didMove(to view: SKView) {
         /*
         let texture = SKTexture(imageNamed: "bird")
@@ -109,8 +111,23 @@ class GameScene: SKScene {
       
     }
     
-    func touchMoved(toPoint pos : CGPoint) {
-       
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if gameStarted == false{
+            if let touch = touches.first{ //dokunulan ilk nokta
+                let touchLocation = touch.location(in: self) //dokunduğumuz nokta
+                let touchNodes = nodes(at: touchLocation) //dokunulan node
+                if touchNodes.isEmpty == false {
+                    for node in touchNodes{
+                        if let sprite = node as? SKSpriteNode{
+                            if sprite == bird {
+                                bird.position = touchLocation
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
     
     func touchUp(atPoint pos : CGPoint) {
@@ -118,9 +135,26 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        /*
+        //kuşu uçurma işlemi
         bird.physicsBody?.applyImpulse(CGVector(dx: 30, dy: 100))
         bird.physicsBody?.affectedByGravity = true
-
+*/
+        if gameStarted == false{
+            if let touch = touches.first{ //dokunulan ilk nokta
+                let touchLocation = touch.location(in: self) //dokunduğumuz nokta
+                let touchNodes = nodes(at: touchLocation) //dokunulan node
+                if touchNodes.isEmpty == false {
+                    for node in touchNodes{
+                        if let sprite = node as? SKSpriteNode{
+                            if sprite == bird {
+                                bird.position = touchLocation
+                            }
+                        }
+                    }
+                }
+            }
+        }
      
     }
     

@@ -19,11 +19,9 @@ class GameScene: SKScene {
     var box5 = SKSpriteNode()
     var box6 = SKSpriteNode()
     var box7 = SKSpriteNode()
-    var box8 = SKSpriteNode()
-    var box9 = SKSpriteNode()
-    var box10 = SKSpriteNode()
     
     var gameStarted = false
+    var originalPosition : CGPoint?
     
     override func didMove(to view: SKView) {
         /*
@@ -48,6 +46,8 @@ class GameScene: SKScene {
         bird.physicsBody?.affectedByGravity = false
         bird.physicsBody?.isDynamic = true
         bird.physicsBody?.mass = 0.15
+        originalPosition = bird.position
+        
         
        
         // BOXES
@@ -106,34 +106,6 @@ class GameScene: SKScene {
         
     }
     
-    
-    func touchDown(atPoint pos : CGPoint) {
-      
-    }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if gameStarted == false{
-            if let touch = touches.first{ //dokunulan ilk nokta
-                let touchLocation = touch.location(in: self) //dokunduğumuz nokta
-                let touchNodes = nodes(at: touchLocation) //dokunulan node
-                if touchNodes.isEmpty == false {
-                    for node in touchNodes{
-                        if let sprite = node as? SKSpriteNode{
-                            if sprite == bird {
-                                bird.position = touchLocation
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-      
-    }
-    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         /*
         //kuşu uçurma işlemi
@@ -141,11 +113,15 @@ class GameScene: SKScene {
         bird.physicsBody?.affectedByGravity = true
 */
         if gameStarted == false{
-            if let touch = touches.first{ //dokunulan ilk nokta
+            
+            if let touch = touches.first{//dokunulan ilk nokta
+                
                 let touchLocation = touch.location(in: self) //dokunduğumuz nokta
                 let touchNodes = nodes(at: touchLocation) //dokunulan node
                 if touchNodes.isEmpty == false {
+                    
                     for node in touchNodes{
+                        
                         if let sprite = node as? SKSpriteNode{
                             if sprite == bird {
                                 bird.position = touchLocation
@@ -158,8 +134,77 @@ class GameScene: SKScene {
      
     }
     
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if gameStarted == false{
+            
+            if let touch = touches.first{ //dokunulan ilk nokta
+                
+                let touchLocation = touch.location(in: self) //dokunduğumuz nokta
+                let touchNodes = nodes(at: touchLocation) //dokunulan node
+                if touchNodes.isEmpty == false {
+                    
+                    for node in touchNodes{
+                        if let sprite = node as? SKSpriteNode{
+                            if sprite == bird {
+                                
+                                bird.position = touchLocation
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        if gameStarted == false {
+        
+        if let touch = touches.first {
+            
+            let touchLocation = touch.location(in: self)
+            let touchNodes = nodes(at: touchLocation)
+            
+            if touchNodes.isEmpty == false {
+                
+                for node in touchNodes {
+                    
+                    if let sprite = node as? SKSpriteNode {
+                        if sprite == bird {
+                           
+                            let dx = -(touchLocation.x - originalPosition!.x)
+                            let dy = -(touchLocation.y - originalPosition!.y)
+                            
+                            let impulse = CGVector(dx: dx, dy: dy)
+                            
+                            bird.physicsBody?.applyImpulse(impulse)
+                            bird.physicsBody?.affectedByGravity = true
+                            
+                            gameStarted = true
+                            
+                        }
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
+        
+    }
+    }
+
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+    }
+    func touchUp(atPoint pos : CGPoint) {
+      
+    }
+    func touchDown(atPoint pos : CGPoint) {
+      
     }
 }
